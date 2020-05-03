@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -20,8 +21,6 @@ import com.tivanov.travelmanager.domain.exception.InvalidBaseCurrencyException;
 @Component
 public class ExchangeRateConnector {
 	
-	private static final String DEFAULT_CURRENCY = "EUR";
-
 	@Autowired
 	private TravelConfig config;
 	
@@ -45,7 +44,13 @@ public class ExchangeRateConnector {
 				.encode()
 				.toUri();
 		logger.info(String.format(" --- ExchangeRate Url: [%s]", exchangeRateUri.toString()));
-		ResponseEntity<?> respEntity = getRestTemplate().exchange(exchangeRateUri, HttpMethod.GET, null, String.class);
+		
+		ResponseEntity<?> respEntity;
+		try {
+			respEntity = getRestTemplate().exchange(exchangeRateUri, HttpMethod.GET, null, String.class);
+		} catch (RestClientException e) {
+			throw new InvalidBaseCurrencyException();
+		}
 		logger.info(String.format(" --- Returned Response: [%s]", respEntity.getStatusCode()));
 		String exchangeRatesGeneralString;
 		if (respEntity.getStatusCodeValue() == 200 &&
@@ -61,7 +66,7 @@ public class ExchangeRateConnector {
 	}
 	
 	public String getGlobalExchangeRates() {
-		return getGlobalExchangeRates(DEFAULT_CURRENCY);
+		return getGlobalExchangeRates(config.getDefaultCurrency());
 	}
 
 }

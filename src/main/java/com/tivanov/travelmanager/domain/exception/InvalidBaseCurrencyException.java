@@ -2,14 +2,11 @@ package com.tivanov.travelmanager.domain.exception;
 
 public class InvalidBaseCurrencyException extends BaseException {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 501648929117982533L;
+	private static final long serialVersionUID = -6127256773101071967L;
 
 	@Override
 	public String getErrorCode() {
-		return "COUNTRY_NOT_FOUND";
+		return "INVALID_BASE_CURRENCY_CODE";
 	}
 
 }

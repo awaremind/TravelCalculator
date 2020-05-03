@@ -1,11 +1,6 @@
 package com.tivanov.travelmanager.domain.model.map;
 
-import java.math.BigDecimal;
-
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 
@@ -13,46 +8,36 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity()
+@NoArgsConstructor
 public class Country {
 	
-    @GeneratedValue(strategy=GenerationType.AUTO)
 	@Id
 	private long id;
     
 	@Getter @Setter
-	@Column
 	private String name;
 	
 	@NotBlank
 	@Getter @Setter
-	@Column
 	private String code;
 	
 	@Getter @Setter
-	@Column
 	private String currency;
 	
-	@Getter @Setter
-	@Column
-	private BigDecimal rate;
-	
-//	@OneToMany(mappedBy = "country", 
-//			cascade = CascadeType.ALL, 
-//			fetch = FetchType.EAGER)
-//	private List<String> neighbours = new ArrayList<>();
-	
-	public Country(String code, String name) {
-		super();
-		this.name = name;
-		this.code = code;
-	}
-
 	public Country(String code) {
 		super();
 		this.code = code;
+	}
+	
+	public Country(String name, @NotBlank String code, String currency) {
+		super();
+		this.name = name;
+		this.code = code;
+		this.currency = currency;
 	}
 
 	@Override
@@ -85,7 +70,4 @@ public class Country {
 		
 		return sb.toString();
 	}
-	
-
-    
 }

@@ -1,6 +1,7 @@
 package com.tivanov.travelmanager.domain.model.map;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,34 +15,39 @@ import org.springframework.stereotype.Component;
  * 
  * @author Tihomir Ivanov
  * 
- * A Graph class with update and traverse methods
+ * A Graph class with interaction and traverse methods
  *
  */
 
 @Component
 public class CountriesMap {
 	
-    private Map<Country, List<Country>> adjVertices;
+    private Map<Country, List<Country>> adjVertices = new HashMap<>();
+    
+    public Set<Country> findAllCountries() {
+    	return adjVertices.keySet();
+    }
+    
+    public Country findCountryByCode(String countryCode) {
+    	return adjVertices.keySet().stream()
+    			.filter(c -> c.equals(new Country(countryCode)))
+    			.findFirst()
+    			.get();
+    }
+    
+    public boolean countryExist(String countryCode) {
+    	return countryExist(new Country(countryCode));
+    }
+    
+    public boolean countryExist(Country country) {
+    	return adjVertices.containsKey(country);
+    }
 	
 	public void addCountry(Country country) {
 		adjVertices.putIfAbsent(country,  new ArrayList<>());
 	}
-     
-	public void addVertex(String label) {
-	    adjVertices.putIfAbsent(new Country(label), new ArrayList<>());
-	}
-	 
-	public void removeVertex(String label) {
-	    Country country = new Country(label);
-	    adjVertices.values()
-	    	.stream()
-	    	.forEach(e -> e.remove(country));
-	    adjVertices.remove(new Country(label));
-	}
-	
-	public void addEdge(String label1, String label2) {
-	    Country vertex1 = new Country(label1);
-	    Country vertex2 = new Country(label2);
+
+	public void addCountryConnection(Country vertex1, Country vertex2) {
 	    adjVertices.get(vertex1).add(vertex2);
 	    adjVertices.get(vertex2).add(vertex1);
 	}
@@ -68,10 +74,10 @@ public class CountriesMap {
 	    	algorithmDepth++; 
 	        Country country = queue.poll();
 	        List <Country> neghbours = adjVertices.get(country);
-	        for (Country v : neghbours) {
-	            if (!visited.contains(v)) {
-	                visited.add(new Country(v.getCode()));
-	                queue.add(new Country(v.getCode()));
+	        for (Country neighbour : neghbours) {
+	            if (!visited.contains(neighbour)) {
+	                visited.add(neighbour);
+	                queue.add(neighbour);
 	            }
 	        }
 	    }

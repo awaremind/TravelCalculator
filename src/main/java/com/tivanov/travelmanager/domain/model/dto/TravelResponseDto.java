@@ -22,23 +22,19 @@ import lombok.Setter;
  *	BigDecimal remainderAmount
  */
 
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class TravelResponseDto {
 	
-	@Getter @Setter
 	private Country originCountry;
 	
-	@Getter @Setter
 	private Set<Country> travelToCountries;
 	
-	@Getter @Setter
 	private Map<Country, BigDecimal> currencyPerCountryMap;
 	
-	@Getter @Setter
 	private BigDecimal remainderAmount;
 	
-	@Getter @Setter
 	private int travelCount;
 	
 }

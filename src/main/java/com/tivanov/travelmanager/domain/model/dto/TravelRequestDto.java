@@ -12,7 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 /**
  * 
  * @author Tihomir Ivanov
@@ -24,22 +23,21 @@ import lombok.Setter;
  * 	String currency	
  */
 
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class TravelRequestDto {
 	
 	@NotBlank
-	@Getter @Setter
 	private Country originCountry;
 	
 	@NotNull
-	@Getter @Setter
 	private BigDecimal amountPerCountry;
 	
 	@NotNull
-	@Getter @Setter
 	private BigDecimal totalAmount;
 	
-	@Getter @Setter
 	private String currency;
+	
+	private boolean automaticRateSet;
 }

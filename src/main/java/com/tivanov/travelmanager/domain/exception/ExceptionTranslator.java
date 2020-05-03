@@ -17,7 +17,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 @ControllerAdvice
 public class ExceptionTranslator {
 	
-	private static final String DATA_NOT_FOUND = "THE DATA REQUESTED HAS NOT BEEN FOUND";
 	private static final String MALFORMED_REQUEST = "THE REQUEST HAS NOT BEEN FORMED OR FORMATTED CORRECTLY";
 	
 	@ExceptionHandler({MissingServletRequestParameterException.class, 
@@ -25,19 +24,24 @@ public class ExceptionTranslator {
 		JsonMappingException.class,
 		JsonProcessingException.class,
 		UnexpectedTypeException.class,
-		ConstraintViolationException.class
+		CountryAlreadyExistsException.class,
+		ConstraintViolationException.class,
+		MissingServletRequestParameterException.class
 		})
 	public ResponseEntity<Object> IllegalRequestExceptionHandler(final Exception e) {
 		return new ResponseEntity<>(MALFORMED_REQUEST, HttpStatus.PRECONDITION_FAILED);
 	}
 	
-	@ExceptionHandler({IllegalArgumentException.class,
-		InvalidBaseCurrencyException.class,
-		EmptyResultDataAccessException.class})
-	public ResponseEntity<Object> requestedDataNotFoundExceptionHandler(final Exception e) {
-		return new ResponseEntity<>(DATA_NOT_FOUND, HttpStatus.NOT_FOUND);
+	@ExceptionHandler({InvalidBaseCurrencyException.class,
+		BaseCurrencyExchangeRateMissmatchException.class})
+	public ResponseEntity<Object> badRequestExceptionHandler(final BaseException e) {
+		return new ResponseEntity<>(e.getErrorCode(), HttpStatus.BAD_REQUEST);
 	}
 	
-	
+	@ExceptionHandler({CountryNotFoundException.class,
+		EmptyResultDataAccessException.class})
+	public ResponseEntity<Object> requestedDataNotFoundExceptionHandler(final BaseException e) {
+		return new ResponseEntity<>(e.getErrorCode(), HttpStatus.NOT_FOUND);
+	}
 	
 }

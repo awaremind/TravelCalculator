@@ -10,24 +10,21 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExchangeRateDto {
 	
 	@JsonProperty
-	@Getter @Setter
 	private String error;
 
 	@JsonProperty
-	@Getter @Setter
 	private String base;
 	
 	@JsonProperty
-	@Getter @Setter
 	private String date;
 	
 	@JsonProperty
-	@Getter @Setter
 	private Map<String, BigDecimal> rates;
 
 }

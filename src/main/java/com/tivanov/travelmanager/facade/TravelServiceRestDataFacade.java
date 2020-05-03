@@ -1,8 +1,9 @@
 package com.tivanov.travelmanager.facade;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -41,25 +42,64 @@ public class TravelServiceRestDataFacade {
 		return setString;
 	}
 
-	public TravelResponseDto postRequest(@NotNull String requestString) throws JsonProcessingException {
+	public TravelResponseDto postRequestRaw(@NotNull String requestString) throws JsonProcessingException {
 		TravelRequestDto request = mapper.readValue(requestString, TravelRequestDto.class);
 		return service.processRequest(request);
+	}
+	
+	public String postRequest(@NotNull String requestString) throws JsonProcessingException {
+		TravelResponseDto response = postRequestRaw(requestString);
 		
+		int i = response.getTravelToCountries().size();
+		Set<Country> travDest = response.getTravelToCountries();
+		Map<Country, BigDecimal> currMap = response.getCurrencyPerCountryMap();
+		
+		StringBuffer sb = new StringBuffer("Bulgaria has ");
+		sb.append(i).append(" neighbour countries (");
+		travDest.forEach(c -> {
+			sb.append(c.getCode()).append(",");
+		});
+		sb.setLength(sb.length() - 1);
+		sb.append(") and the traveler can travel around them ")
+			.append(response.getTravelCount())
+			.append(" times. He will have ")
+			.append(response.getRemainderAmount())
+			.append(" ")
+			.append(response.getOriginCountry().getCurrency())
+			.append(" leftover. ");
+		travDest.forEach(c -> {
+			sb.append("For ")
+				.append(c.getName())
+				.append(" he will need to buy ")
+				.append(currMap.get(c))
+				.append(" ")
+				.append(c.getCurrency())
+				.append(". ");
+		});
+		
+		return sb.toString();
 	}
 
 	public void updateRate(@NotNull String requestString) throws JsonProcessingException {
-		Country country = mapper.readValue(requestString, Country.class);
-		service.updateRate(country);
-		
+		ExchangeRateDto exchangeRates = mapper.readValue(requestString, ExchangeRateDto.class);
+		service.updateRate(exchangeRates);
 	}
 
-	public void addCountry(@NotBlank String countryCode) {
-		Country country = new Country(countryCode.toUpperCase());
+	public void addCountry(@NotBlank String countryString) throws JsonProcessingException {
+		Country country = mapper.readValue(countryString, Country.class);
 		service.addCountry(country);
 	}
 
-	public void addCountryConnection(@NotBlank String cc1, @NotBlank String cc2) {
-		service.addCountryConnection(cc1.toUpperCase(), cc2.toUpperCase());
+	public void addCountryConnection(String connectedCountriesString) throws JsonProcessingException {
+		List<Country> countries = Arrays.asList(mapper.readValue(connectedCountriesString, Country[].class));
+		countries.forEach(c -> {
+			c.setCode(c.getCode().toUpperCase());
+		});
+		service.addCountryConnection(countries.get(0), countries.get(1));
+	}
+
+	public Set<Country> getAllCountries() {
+		return service.findAllCountries();
 	}
 	
 }

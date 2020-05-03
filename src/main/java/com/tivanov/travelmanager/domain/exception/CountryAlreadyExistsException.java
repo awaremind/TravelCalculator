@@ -1,6 +1,6 @@
 package com.tivanov.travelmanager.domain.exception;
 
-public class CountryNotFoundException extends BaseException {
+public class CountryAlreadyExistsException extends BaseException {
 
 	/**
 	 * 
@@ -9,7 +9,7 @@ public class CountryNotFoundException extends BaseException {
 
 	@Override
 	public String getErrorCode() {
-		return "COUNTRY_NOT_FOUND";
+		return "COUNTRY_ALREADY_EXISTS";
 	}
 
 }
