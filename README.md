@@ -40,7 +40,7 @@ In the Spring setup properties, the src/main/resources/application.properties fi
 
 ## Known Limitation
 
-As the added countries, their connections and the currency exchange rates are in memory, the information will be lost upon restart or shutdown. 
-It is possible to load the currency exchange rates for the availble currencies from the ECB API. 
-It is possible to do so manually providing the rates manually. 
-That will replace the autmatically gotten rates and vice versa. 
+- As the added countries, their connections and the currency exchange rates are in memory, the information will be lost upon restart or shutdown. 
+- It is possible to load the currency exchange rates for the availble currencies from the ECB API. 
+- It is possible to do so manually providing the rates manually. 
+The latter will replace the autmatically gotten rates(or the previously configured ones) and vice versa. 
