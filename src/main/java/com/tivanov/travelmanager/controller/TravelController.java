@@ -24,6 +24,11 @@ import com.tivanov.travelmanager.domain.model.dto.ExchangeRateDto;
 import com.tivanov.travelmanager.domain.model.map.Country;
 import com.tivanov.travelmanager.facade.TravelServiceRestDataFacade;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
 /**
  * 
  * @author Tihomir Ivanov
@@ -31,7 +36,7 @@ import com.tivanov.travelmanager.facade.TravelServiceRestDataFacade;
  * It provides all API endpoints for travel update routes and calculations 
  *
  */
-
+@Api(value = "/travel")
 @RestController
 @Validated
 @RequestMapping(value = "/travel") 
@@ -46,6 +51,13 @@ public class TravelController {
 	 * @return Code 201 Created.
 	 * @throws JsonMappingException
 	 */
+	@ApiOperation(value = "Updates exchange rates", notes="This service updates exchange rates. "
+			+ "It will overwrite all currently existing exchange rates.")
+	@ApiResponses(value = {
+	        @ApiResponse(code = 201, message = "The request has succeeded. The data has been stored."),
+	        @ApiResponse(code = 400, message = "The request has not been properly formed or formatted."),
+	        @ApiResponse(code = 404, message = "One or more pieces of the requested data has not been found.")
+	        })
 	@PostMapping
 	@RequestMapping(value = {"/updaterate", "/update/rate"}, method=RequestMethod.POST)
 	public ResponseEntity<?> updateRateByCode(@RequestBody @NotNull String requestString) 
@@ -60,6 +72,13 @@ public class TravelController {
 	 * @return String Explanation in readable text for the travel.
 	 * @throws JsonMappingException
 	 */
+	@ApiOperation(value = "Calculates the travel", notes="This service calculates the travel. "
+			+ "It returns in human readable text the details of the future trip.")
+	@ApiResponses(value = {
+			@ApiResponse(code = 201, message = "The request has succeeded. The data has been stored."),
+	        @ApiResponse(code = 400, message = "The request has not been properly formed or formatted."),
+	        @ApiResponse(code = 404, message = "One or more pieces of the requested data has not been found.")
+	        })
 	@PostMapping
 	@RequestMapping(value = "/calculate", method=RequestMethod.POST)
 	@ResponseStatus(code = HttpStatus.OK)
@@ -75,8 +94,16 @@ public class TravelController {
 	 * @return Code 201 Created.
 	 * @throws JsonMappingException
 	 */
+	@ApiOperation(value = "Add country to the map", notes="This service adds another country to the map."
+			+ " The proper connections should be added to the country in order to be traversed properly "
+			+ "from their neighbours.")
+	@ApiResponses(value = {
+			@ApiResponse(code = 201, message = "The request has succeeded. The data has been stored."),
+	        @ApiResponse(code = 400, message = "The request has not been properly formed or formatted."),
+	        @ApiResponse(code = 404, message = "One or more pieces of the requested data has not been found.")
+	        })
 	@PostMapping
-	@RequestMapping(value = {"/add/country", "/addcountry"}, method=RequestMethod.POST)
+	@RequestMapping(value = {"/add/country"}, method=RequestMethod.POST)
 	public ResponseEntity<?> addCountry(@RequestBody @NotNull String countryString) 
 			throws JsonProcessingException  {
 		serviceFacade.addCountry(countryString);
@@ -89,8 +116,15 @@ public class TravelController {
 	 * @return Code 201 Created.
 	 * @throws JsonMappingException
 	 */
+	@ApiOperation(value = "Adds a connection between countries", notes="This service adds a connection "
+			+ "between countries in order they to be properly traversed as neighbours.")
+	@ApiResponses(value = {
+			@ApiResponse(code = 201, message = "The request has succeeded. The data has been stored."),
+	        @ApiResponse(code = 400, message = "The request has not been properly formed or formatted."),
+	        @ApiResponse(code = 404, message = "One or both of the requested countries has not been found.")
+	        })
 	@PostMapping
-	@RequestMapping(value = {"/add/country/connection", "/addcountry/connection"}, method=RequestMethod.POST)
+	@RequestMapping(value = {"/add/country/connection"}, method=RequestMethod.POST)
 	@ResponseStatus(code = HttpStatus.OK)
 	public ResponseEntity<?> addCountryConnection(@RequestBody @NotNull String connectedCountriesString) 
 			throws JsonProcessingException  {
@@ -103,8 +137,16 @@ public class TravelController {
 	 * @param baseCurrency - the base currency to which the rates will be requested
 	 * @return JSON with the base currency and rates subObject with all exchange rates
 	 */
+	@ApiOperation(value = "Gets Exchange Rates from ECB", notes="This service the see the aexchange rates. "
+			+ "It stores them locally and returns JSON with the base currency and rates sub-object with "
+			+ "all currency codes with their respective exchange rates.")
+	@ApiResponses(value = {
+	        @ApiResponse(code = 200, message = "The request has succeeded."),
+	        @ApiResponse(code = 400, message = "The request has not been properly formed or formatted."),
+	        @ApiResponse(code = 404, message = "One or more pieces of the requested data has not been found.")
+	        })
 	@GetMapping
-	@RequestMapping(value = {"/exchangerates/{baseCurrency}", "/rates/{baseCurrency}"}, method=RequestMethod.GET)
+	@RequestMapping(value = {"/rates/{baseCurrency}"}, method=RequestMethod.GET)
 	@ResponseStatus(code = HttpStatus.OK)
 	public ResponseEntity<?> getAllRatesForBaseCurrency(
 				@NotBlank @PathVariable(name="baseCurrency") String baseCurrency) {
@@ -117,9 +159,14 @@ public class TravelController {
 	 * A request that shows all the countries in the country map graph
 	 * @return JSON with all countries, their name, code and currencyCode
 	 */
-	
+	@ApiOperation(value = "Gets all stored countries", notes="This service prints all stored countries.")
+	@ApiResponses(value = {
+	        @ApiResponse(code = 200, message = "The request has succeeded."),
+	        @ApiResponse(code = 400, message = "The request has not been properly formed or formatted."),
+	        @ApiResponse(code = 404, message = "One or more pieces of the requested data has not been found.")
+	        })
 	@GetMapping
-	@RequestMapping(value = {"/country/all", "/allcountries"}, method=RequestMethod.GET)
+	@RequestMapping(value = {"/list/country/all"}, method=RequestMethod.GET)
 	@ResponseStatus(code = HttpStatus.OK)
 	public ResponseEntity<?> getAllCountries() {
 		Set<Country> countriesList = serviceFacade.getAllCountries();
