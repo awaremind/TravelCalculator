@@ -82,9 +82,11 @@ public class TravelProcessor {
 		TravelResponseDto response = new TravelResponseDto();
 		response.setRemainderAmount(calculateRemainder());
 		response.setTravelCount(calculateTravelCount());
+		
 		Country originCountry = countriesMap.findCountryByCode(request.getOriginCountry().getCode());
 		originCountry.setCurrency(requestCurrency); // storing the request currency overwriting the original currency
 		response.setOriginCountry(originCountry);
+		
 		response.setCurrencyPerCountryMap(calcAllBudgetsInCurrency());
 		response.setTravelToCountries(neighbours);
 		
@@ -95,6 +97,7 @@ public class TravelProcessor {
 		this.totalBudget = request.getTotalAmount();
 		this.countryBudget = request.getAmountPerCountry();
 		this.requestCurrency = request.getCurrency();
+		
 		if (request.isAutomaticRateSet()) {
 			this.currExchRateMap = service.getExchRateGeneralMap(requestCurrency);
 		} else if (!requestCurrency.equalsIgnoreCase(currExchRateMap.getBase())) {

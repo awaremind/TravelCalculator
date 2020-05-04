@@ -2,6 +2,7 @@ package com.tivanov.travelmanager.domain.model.dto;
 
 import java.math.BigDecimal;
 
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -17,9 +18,9 @@ import lombok.Setter;
  * @author Tihomir Ivanov
  * Request DTO
  * 
- * 	Country originCountry
- * 	BigDecimal amountPerCountry
- * 	BigDecimal totalAmount
+ * 	Country originCountry,
+ * 	BigDecimal amountPerCountry,
+ * 	BigDecimal totalAmount,
  * 	String currency	
  */
 
@@ -35,6 +36,7 @@ public class TravelRequestDto {
 	private BigDecimal amountPerCountry;
 	
 	@NotNull
+	@DecimalMin("00.01")
 	private BigDecimal totalAmount;
 	
 	private String currency;

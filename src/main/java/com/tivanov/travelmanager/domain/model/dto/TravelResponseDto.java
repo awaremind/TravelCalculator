@@ -17,9 +17,13 @@ import lombok.Setter;
  * @author Tihomir Ivanov
  * Response DTO
  * 
- * 	Country originCountry
- *	Map<Country, BigDecimal> currencyPerCountryMap
- *	BigDecimal remainderAmount
+ * 	Country originCountry,
+ *	Map<Country, BigDecimal> currencyPerCountryMap,
+ *	BigDecimal remainderAmount,
+ *	Set<Country> travelToCountries,
+ *	BigDecimal remainderAmount,
+ *	int travelCount,
+ *
  */
 
 @Getter @Setter

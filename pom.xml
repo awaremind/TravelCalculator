@@ -10,15 +10,24 @@
 	</parent>
 	<groupId>com.tivanov</groupId>
 	<artifactId>TravelManager</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<name>TravelManager</name>
 	<description>TravelManager</description>
 	
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
-
+	<!-- >>> swagger >>>-->
+	<repositories>
+	    <repository>
+	        <id>jcenter-snapshots</id>
+	        <name>jcenter</name>
+	        <url>http://oss.jfrog.org/artifactory/oss-snapshot-local/</url>
+	    </repository>
+	</repositories>
+    <!-- <<< swagger <<< -->
 	<dependencies>
+	    <!-- >>> spring >>>-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -31,58 +40,102 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-rest</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- <<< spring <<< -->
         
         <dependency>
-		    <groupId>com.fasterxml.jackson.dataformat</groupId>
-		    <artifactId>jackson-dataformat-csv</artifactId>       
-		</dependency>
-		
-		<dependency>
-		    <groupId>com.h2database</groupId>
-		    <artifactId>h2</artifactId>
-		    <scope>runtime</scope>
-		</dependency>
-		<dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        
+        <!-- >>> additional >>>-->
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
-		
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
         </dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<scope>runtime</scope>
-			<optional>true</optional>
+        <!-- >>> additional >>>-->
+        
+        <dependency>
+            <groupId>org.springframework.plugin</groupId>
+            <artifactId>spring-plugin-core</artifactId>
+            <version>2.0.0.RELEASE</version>
+        </dependency>
+        <!-- >>> swagger >>>-->
+        <dependency>
+		    <groupId>io.springfox</groupId>
+		    <artifactId>springfox-swagger-ui</artifactId>
+		    <version>3.0.0-SNAPSHOT</version>
+		</dependency>
+        <dependency>
+		    <groupId>io.springfox</groupId>
+		    <artifactId>springfox-swagger2</artifactId>
+		    <version>3.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
+            <groupId>io.springfox</groupId>
+			<artifactId>springfox-data-rest</artifactId>
+		    <version>3.0.0-SNAPSHOT</version>
 			<exclusions>
-				<exclusion>
-					<groupId>org.junit.vintage</groupId>
-					<artifactId>junit-vintage-engine</artifactId>
-				</exclusion>
+			  <exclusion>
+			    <groupId>org.springframework.hateoas</groupId>
+			    <artifactId>spring-hateoas</artifactId>
+			  </exclusion>
 			</exclusions>
+	    </dependency>
+	    <dependency>
+		    <groupId>io.springfox</groupId>
+		    <artifactId>springfox-bean-validators</artifactId>
+		    <version>3.0.0-SNAPSHOT</version>
+		</dependency>
+	    <!--  <dependency>
+		    <groupId>org.springdoc</groupId>
+		    <artifactId>springdoc-openapi-core</artifactId>
+		    <version>1.1.49</version>
+		    <exclusions>
+		<exclusion>
+		<groupId>io.github.classgraph</groupId>
+		<artifactId>classgraph</artifactId>
+		</exclusion>
+		</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-configuration-processor</artifactId>
-			<optional>true</optional>
-		</dependency>
+		    <groupId>org.springdoc</groupId>
+		    <artifactId>springdoc-openapi-ui</artifactId>
+		    <version>1.1.49</version>
+		</dependency>  -->
+		
+		<!-- <<< swagger <<< -->
 	</dependencies>
 
 	<build>

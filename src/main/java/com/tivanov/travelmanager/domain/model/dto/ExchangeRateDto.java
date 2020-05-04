@@ -10,6 +10,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+
+/**
+ * 
+ * @author Tihomir Ivanov
+ * Exchange Rate DTO
+ * 
+ * 	String error,	
+ * 	String base	,
+ * 	String date	,
+ * 	String error,
+ * 	BigDecimal rates	
+ */
+
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
