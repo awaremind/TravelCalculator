@@ -23,29 +23,18 @@ public class SwaggerConfig {
     public Docket postsApi() {
         return new Docket(DocumentationType.SWAGGER_2)
         		.apiInfo(apiInfo())
+        		.useDefaultResponseMessages(false)
         		.select()        
-                .apis(RequestHandlerSelectors.withClassAnnotation(RestController.class))              
+                .apis(RequestHandlerSelectors.withClassAnnotation(RestController.class))
                 .paths(PathSelectors.any())                          
                 .build();   
     }
     
-//    @Bean
-//    public PluginRegistry<LinkDiscoverer, MediaType> discoverers(
-//            OrderAwarePluginRegistry<LinkDiscoverer, MediaType> relProviderPluginRegistry) {
-//        return relProviderPluginRegistry;
-//    }
-
-//    private Predicate<String travelPaths() {
-//        return or(
-//                regex("/travel/*")
-//        );
-//    }
-
     @SuppressWarnings("deprecation")
 	private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("Travel Calculaator API")
-                .description("Spring  API reference for developers")
+                .title("Travel Calculator API")
+                .description("Spring API reference for developers")
                 .termsOfServiceUrl("http://localhost/")
                 .contact("Tihomir Ivanov")
                 .license("Apache License Version 2.0")

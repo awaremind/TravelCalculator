@@ -60,11 +60,12 @@ public class TravelProcessor {
 		}
 		neighbours.forEach(c -> {
 			BigDecimal rate = currExchRateMap.getRates().get(c.getCurrency());
+			Country tempCountry = new Country(c);
 			if (rate == null) {
 				rate = new BigDecimal(1);
-				c.setCurrency(requestCurrency); // resetting the currencyCode where no rate is present
+				tempCountry.setCurrency(requestCurrency); // resetting the currencyCode where no rate is present
 			}
-			amountInCurrency.put(c, rate.multiply(countryBudget)
+			amountInCurrency.put(tempCountry, rate.multiply(countryBudget)
 					.multiply(new BigDecimal(calculateTravelCount())));	
 		});
 		return amountInCurrency;
@@ -77,18 +78,17 @@ public class TravelProcessor {
 	public TravelResponseDto processRequest(TravelRequestDto request) {
 		setLocalVariablesFromRequest(request);
 		
-		neighbours = countriesMap.breadthFirstTraversal(request.getOriginCountry().getCode(), config.getTrasversalDepthLevel());
+		neighbours = countriesMap.breadthFirstTraversal(request.getOriginCountry(), config.getTrasversalDepthLevel());
 		
 		TravelResponseDto response = new TravelResponseDto();
 		response.setRemainderAmount(calculateRemainder());
 		response.setTravelCount(calculateTravelCount());
 		
-		Country originCountry = countriesMap.findCountryByCode(request.getOriginCountry().getCode());
+		Country originCountry = countriesMap.findCountryByCode(request.getOriginCountry());
 		originCountry.setCurrency(requestCurrency); // storing the request currency overwriting the original currency
 		response.setOriginCountry(originCountry);
 		
 		response.setCurrencyPerCountryMap(calcAllBudgetsInCurrency());
-		response.setTravelToCountries(neighbours);
 		
 		return response;
 	}
@@ -100,7 +100,8 @@ public class TravelProcessor {
 		
 		if (request.isAutomaticRateSet()) {
 			this.currExchRateMap = service.getExchRateGeneralMap(requestCurrency);
-		} else if (!requestCurrency.equalsIgnoreCase(currExchRateMap.getBase())) {
+		} else if (!(requestCurrency.equalsIgnoreCase(currExchRateMap.getBase()) || 
+						currExchRateMap.getBase() == null)) {
 				throw new BaseCurrencyExchangeRateMissmatchException();
 			}
 	}

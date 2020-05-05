@@ -6,8 +6,6 @@ import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import com.tivanov.travelmanager.domain.model.map.Country;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,7 +28,7 @@ import lombok.Setter;
 public class TravelRequestDto {
 	
 	@NotBlank
-	private Country originCountry;
+	private String originCountry;
 	
 	@NotNull
 	private BigDecimal amountPerCountry;

@@ -7,9 +7,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -41,21 +38,21 @@ public class TravelServiceRestDataFacade {
 				.collect(Collectors.toSet());
 		return setString;
 	}
-
-	public TravelResponseDto postRequestRaw(@NotNull String requestString) throws JsonProcessingException {
+	
+	public TravelResponseDto postRequestFromString(String requestString) throws JsonProcessingException {
 		TravelRequestDto request = mapper.readValue(requestString, TravelRequestDto.class);
 		return service.processRequest(request);
 	}
 	
-	public String postRequest(@NotNull String requestString) throws JsonProcessingException {
-		TravelResponseDto response = postRequestRaw(requestString);
+	public String postRequest(String requestString) throws JsonProcessingException {
+		TravelResponseDto response = postRequestFromString(requestString);
 		
-		int i = response.getTravelToCountries().size();
-		Set<Country> travDest = response.getTravelToCountries();
+		int travelCountryCount = response.getCurrencyPerCountryMap().size();
+		Set<Country> travDest = response.getCurrencyPerCountryMap().keySet();
 		Map<Country, BigDecimal> currMap = response.getCurrencyPerCountryMap();
 		
 		StringBuffer sb = new StringBuffer("Bulgaria has ");
-		sb.append(i).append(" neighbour countries (");
+		sb.append(travelCountryCount).append(" neighbour countries (");
 		travDest.forEach(c -> {
 			sb.append(c.getCode()).append(",");
 		});
@@ -67,7 +64,7 @@ public class TravelServiceRestDataFacade {
 			.append(" ")
 			.append(response.getOriginCountry().getCurrency())
 			.append(" leftover. ");
-		travDest.forEach(c -> {
+		travDest.stream().forEach(c -> {
 			sb.append("For ")
 				.append(c.getName())
 				.append(" he will need to buy ")
@@ -76,17 +73,18 @@ public class TravelServiceRestDataFacade {
 				.append(c.getCurrency())
 				.append(". ");
 		});
-		
 		return sb.toString();
 	}
 
-	public void updateRate(@NotNull String requestString) throws JsonProcessingException {
+	public void updateRate(String requestString) throws JsonProcessingException {
 		ExchangeRateDto exchangeRates = mapper.readValue(requestString, ExchangeRateDto.class);
 		service.updateRate(exchangeRates);
 	}
 
-	public void addCountry(@NotBlank String countryString) throws JsonProcessingException {
+	public void addCountry(String countryString) throws JsonProcessingException {
 		Country country = mapper.readValue(countryString, Country.class);
+		country.setCode(country.getCode().toUpperCase());
+		country.setCurrency(country.getCurrency().toUpperCase());
 		service.addCountry(country);
 	}
 

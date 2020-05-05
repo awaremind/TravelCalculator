@@ -67,6 +67,9 @@ public class CountriesMap {
 	
 	public Set<Country> breadthFirstTraversal(String root, int depth) {
 	    Set<Country> visited = new LinkedHashSet<>();
+	    if (adjVertices.get(new Country(root)).isEmpty()) {
+	    	return visited;
+	    }
 	    Queue<Country> queue = new LinkedList<>();
 	    queue.add(new Country(root));
 	    int algorithmDepth = 0;

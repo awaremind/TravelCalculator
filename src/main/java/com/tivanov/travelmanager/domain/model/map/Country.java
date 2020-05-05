@@ -13,7 +13,7 @@ import lombok.Setter;
 
 @Entity()
 @NoArgsConstructor
-public class Country {
+public class Country implements Cloneable{
 	
 	@Id
 	private long id;
@@ -40,6 +40,12 @@ public class Country {
 		this.currency = currency;
 	}
 
+	public Country(Country another) {
+		this.code = new String(another.getCode());
+		this.currency = new String(another.getCurrency());
+		this.name = new String(another.getName());
+	}
+	
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()

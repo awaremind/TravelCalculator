@@ -2,7 +2,6 @@ package com.tivanov.travelmanager.domain.model.dto;
 
 import java.math.BigDecimal;
 import java.util.Map;
-import java.util.Set;
 
 import com.tivanov.travelmanager.domain.model.map.Country;
 
@@ -32,8 +31,6 @@ import lombok.Setter;
 public class TravelResponseDto {
 	
 	private Country originCountry;
-	
-	private Set<Country> travelToCountries;
 	
 	private Map<Country, BigDecimal> currencyPerCountryMap;
 	

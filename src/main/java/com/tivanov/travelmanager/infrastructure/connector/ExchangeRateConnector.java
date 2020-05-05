@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -17,7 +16,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.tivanov.travelmanager.config.TravelConfig;
 import com.tivanov.travelmanager.domain.exception.InvalidBaseCurrencyException;
 
-@EnableScheduling
 @Component
 public class ExchangeRateConnector {
 	

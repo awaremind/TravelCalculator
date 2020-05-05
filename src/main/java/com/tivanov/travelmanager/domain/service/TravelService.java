@@ -2,7 +2,7 @@ package com.tivanov.travelmanager.domain.service;
 
 import java.util.Set;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,34 +60,40 @@ public class TravelService {
 		if (!("".equals(exchangeRates.getError()) || exchangeRates.getError() == null)) {
 			throw new InvalidBaseCurrencyException();
 		}
+		updateRate(exchangeRates);
 		return exchangeRates;
 	}
-
+	
 	public Set<Country> getNeighbours(String country) {
 		return countriesMap.breadthFirstTraversal(country.toUpperCase(), 1);
 	}
 
-	public TravelResponseDto processRequest(TravelRequestDto request)  {
-		if (request.getCurrency() != null) {
-			request.getCurrency().toUpperCase();
+	public TravelResponseDto processRequest(@Valid TravelRequestDto request)  {
+		if (request.getCurrency() != null || !"".equals(request.getCurrency())) {
+			request.setCurrency(request.getCurrency().toUpperCase());
 		} else {
 			request.setCurrency(config.getDefaultCurrency());
+		}
+		if (request.getOriginCountry() != null || !"".equals(request.getOriginCountry())) {
+			request.setOriginCountry(request.getOriginCountry().toUpperCase());
+		} else {
+			throw new CountryNotFoundException();
 		}
 		return processor.processRequest(request);
 	}
 
-	public void updateRate(ExchangeRateDto exchangeRates) {
+	public void updateRate(@Valid ExchangeRateDto exchangeRates) {
 		processor.setCurrExchRateMap(exchangeRates);
 	}
 
-	public void addCountry(Country country) {
+	public void addCountry(@Valid Country country) {
 		if (countriesMap.countryExist(country)) {
 			throw new CountryAlreadyExistsException();
 		}
 		countriesMap.addCountry(country);
 	}
 
-	public void addCountryConnection(@NotNull Country c1, @NotNull Country c2) {
+	public void addCountryConnection(@Valid Country c1, @Valid Country c2) {
 		if (countriesMap.countryExist(c1) && countriesMap.countryExist(c2)) {
 			countriesMap.addCountryConnection(c1, c2);
 		} else {
