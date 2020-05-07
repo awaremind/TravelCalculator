@@ -27,16 +27,18 @@ import lombok.Setter;
 @AllArgsConstructor
 public class TravelRequestDto {
 	
-	@NotBlank
+	@NotBlank(message = "Country code is mandatory")
 	private String originCountry;
 	
-	@NotNull
+	@NotNull(message = "Amount per country is mandatory")
+	@DecimalMin("00.01")
 	private BigDecimal amountPerCountry;
 	
-	@NotNull
+	@NotNull(message = "Total amount is mandatory")
 	@DecimalMin("00.01")
 	private BigDecimal totalAmount;
 	
+	@NotBlank(message = "Currency code is mandatory")
 	private String currency;
 	
 	private boolean automaticRateSet;

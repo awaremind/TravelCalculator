@@ -3,16 +3,19 @@ package com.tivanov.travelmanager.domain.service;
 import java.util.Set;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tivanov.travelmanager.config.TravelConfig;
+import com.tivanov.travelmanager.domain.exception.BaseCurrencyExchangeRateMissmatchException;
 import com.tivanov.travelmanager.domain.exception.CountryAlreadyExistsException;
 import com.tivanov.travelmanager.domain.exception.CountryNotFoundException;
 import com.tivanov.travelmanager.domain.exception.InvalidBaseCurrencyException;
@@ -25,6 +28,7 @@ import com.tivanov.travelmanager.domain.processor.TravelProcessor;
 import com.tivanov.travelmanager.infrastructure.connector.ExchangeRateConnector;
 
 @Service
+@Validated
 public class TravelService {
 	
 	@Autowired
@@ -44,10 +48,7 @@ public class TravelService {
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	
-	public ExchangeRateDto getExchRateGeneralMap (String baseCurrency) {
-		if ("".equals(baseCurrency) || baseCurrency == null) {
-			baseCurrency = config.getDefaultCurrency();
-		}
+	public ExchangeRateDto getExchRateGeneralMap (@NotBlank String baseCurrency) {
 		String exchangeRatesGeneralString = connector.getGlobalExchangeRates(baseCurrency.toUpperCase());
 		
 		mapper.enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS);
@@ -64,19 +65,25 @@ public class TravelService {
 		return exchangeRates;
 	}
 	
-	public Set<Country> getNeighbours(String country) {
-		return countriesMap.breadthFirstTraversal(country.toUpperCase(), 1);
+	public Set<Country> getNeighbours(String countryCode) {
+		return countriesMap.breadthFirstTraversal(countryCode.toUpperCase(), config.getTrasversalDepthLevel());
 	}
 
 	public TravelResponseDto processRequest(@Valid TravelRequestDto request)  {
-		if (request.getCurrency() != null || !"".equals(request.getCurrency())) {
-			request.setCurrency(request.getCurrency().toUpperCase());
+		String baseCurrency = processor.getCurrExchRateMap().getBase();
+		String requestCurrency = request.getCurrency();
+				request.setCurrency(request.getCurrency().toUpperCase());
+		if (request.isAutomaticRateSet()) {
+			processor.setCurrExchRateMap(getExchRateGeneralMap(requestCurrency));
 		} else {
-			request.setCurrency(config.getDefaultCurrency());
+			if (!(requestCurrency.equalsIgnoreCase(baseCurrency) || 
+							baseCurrency == null)) {
+					throw new BaseCurrencyExchangeRateMissmatchException();
+				}
 		}
-		if (request.getOriginCountry() != null || !"".equals(request.getOriginCountry())) {
-			request.setOriginCountry(request.getOriginCountry().toUpperCase());
-		} else {
+		
+		if (request.getOriginCountry() == null || "".equals(request.getOriginCountry()) 
+				|| !countriesMap.countryExist(request.getOriginCountry())) {
 			throw new CountryNotFoundException();
 		}
 		return processor.processRequest(request);
@@ -93,9 +100,9 @@ public class TravelService {
 		countriesMap.addCountry(country);
 	}
 
-	public void addCountryConnection(@Valid Country c1, @Valid Country c2) {
-		if (countriesMap.countryExist(c1) && countriesMap.countryExist(c2)) {
-			countriesMap.addCountryConnection(c1, c2);
+	public void addCountryConnection(@Valid Country country1, @Valid Country country2) {
+		if (countriesMap.countryExist(country1) && countriesMap.countryExist(country2)) {
+			countriesMap.addCountryConnection(country1, country2);
 		} else {
 			throw new CountryNotFoundException();
 		}
@@ -103,5 +110,29 @@ public class TravelService {
 
 	public Set<Country> findAllCountries() {
 		return countriesMap.findAllCountries();
+	}
+	
+	public void remouveCountry(@Valid Country country) {
+		if (!countriesMap.countryExist(country)) {
+			throw new CountryNotFoundException();
+		}
+		countriesMap.removeCountry(country);
+	}
+
+	public void removeCountryConnection(Country country1, Country country2) {
+		if (countriesMap.countryExist(country1) && countriesMap.countryExist(country2)) {
+			countriesMap.removeConnection(country1, country2);
+		} else {
+			throw new CountryNotFoundException();
+		}
+	}
+
+	public void removeCountry(Country country) {
+		if (countriesMap.countryExist(country)) {
+			countriesMap.removeCountry(country);
+		} else {
+			throw new CountryNotFoundException();
+		}
+		
 	}
 }

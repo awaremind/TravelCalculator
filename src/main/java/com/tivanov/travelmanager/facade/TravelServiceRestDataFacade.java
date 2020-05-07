@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.validation.constraints.NotBlank;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -83,8 +85,6 @@ public class TravelServiceRestDataFacade {
 
 	public void addCountry(String countryString) throws JsonProcessingException {
 		Country country = mapper.readValue(countryString, Country.class);
-		country.setCode(country.getCode().toUpperCase());
-		country.setCurrency(country.getCurrency().toUpperCase());
 		service.addCountry(country);
 	}
 
@@ -98,6 +98,14 @@ public class TravelServiceRestDataFacade {
 
 	public Set<Country> getAllCountries() {
 		return service.findAllCountries();
+	}
+
+	public void removeCountryConnection(String country1, String country2) {
+		service.removeCountryConnection(new Country(country1), new Country(country2));
+	}
+
+	public void removeCountry(@NotBlank String country) {
+		service.removeCountry(new Country(country));
 	}
 	
 }

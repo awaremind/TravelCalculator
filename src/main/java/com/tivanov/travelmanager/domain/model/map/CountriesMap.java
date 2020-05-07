@@ -52,9 +52,7 @@ public class CountriesMap {
 	    adjVertices.get(vertex2).add(vertex1);
 	}
 	
-	public void removeEdge(String label1, String label2) {
-	    Country vertex1 = new Country(label1);
-	    Country vertex2 = new Country(label2);
+	public void removeConnection(Country vertex1, Country vertex2) {
 	    List<Country> verticesList1 = adjVertices.get(vertex1);
 	    List<Country> verticesList2 = adjVertices.get(vertex2);
 	    if (verticesList1 != null) {
@@ -63,6 +61,11 @@ public class CountriesMap {
 	    if (verticesList2 != null) {
 	    	verticesList2.remove(vertex1);
 	    }
+	}
+	
+	public void removeCountry(Country country) {
+	    adjVertices.values().forEach(e -> e.remove(country));
+	    adjVertices.remove(country);
 	}
 	
 	public Set<Country> breadthFirstTraversal(String root, int depth) {

@@ -2,13 +2,11 @@ package com.tivanov.travelmanager.controller;
 
 import java.util.Set;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,7 +42,6 @@ import io.swagger.annotations.ExampleProperty;
 @Api(value = "/travel")
 @ApiModel(description = "Main endpoint to access the application functionality")
 @RestController
-@Validated
 @RequestMapping(value = "/travel") 
 public class TravelController {
 	
@@ -85,7 +82,7 @@ public class TravelController {
 	@RequestMapping(value = {"/update/rate"}, method=RequestMethod.POST)
 	public ResponseEntity<?> updateRateByCode(
 			@ApiParam(hidden=true)
-			@RequestBody @NotNull String requestString) 
+			@RequestBody String requestString) 
 			throws JsonMappingException, JsonProcessingException {
 		serviceFacade.updateRate(requestString);
 		return new ResponseEntity<>(HttpStatus.CREATED);
@@ -120,7 +117,7 @@ public class TravelController {
 	@PostMapping
 	@RequestMapping(value = "/calculate", method=RequestMethod.POST)
 	@ResponseStatus(code = HttpStatus.OK)
-	public ResponseEntity<?> calculateTravel(@ApiParam(hidden = true) @RequestBody @NotNull String requestString) 
+	public ResponseEntity<?> calculateTravel(@ApiParam(hidden = true) @RequestBody String requestString) 
 			throws JsonProcessingException {
 		String response = serviceFacade.postRequest(requestString);
 		return new ResponseEntity<>(response, HttpStatus.OK);
@@ -152,7 +149,8 @@ public class TravelController {
 		    		"}")
 	@PostMapping
 	@RequestMapping(value = {"/add/country"}, method=RequestMethod.POST)
-	public ResponseEntity<?> addCountry(@ApiParam(hidden = true) @RequestBody @NotNull String countryString) 
+	@ResponseStatus(code = HttpStatus.CREATED)
+	public ResponseEntity<?> addCountry(@ApiParam(hidden = true) @RequestBody String countryString) 
 			throws JsonProcessingException  {
 		serviceFacade.addCountry(countryString);
 		return new ResponseEntity<>(HttpStatus.CREATED);
@@ -188,12 +186,75 @@ public class TravelController {
 		    		"}]")
 	@PostMapping
 	@RequestMapping(value = {"/add/country/connection"}, method=RequestMethod.POST)
-	@ResponseStatus(code = HttpStatus.OK)
-	public ResponseEntity<?> addCountryConnection(@ApiParam(hidden = true) @RequestBody @NotBlank String connectedCountriesString) 
+	@ResponseStatus(code = HttpStatus.CREATED)
+	public ResponseEntity<?> addCountryConnection(@ApiParam(hidden = true) @RequestBody String connectedCountriesString) 
 			throws JsonProcessingException  {
 		serviceFacade.addCountryConnection(connectedCountriesString);
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
+	
+	/**
+	 * Removes a connection between countries
+	 * 
+	 * @param String country1
+	 * @param String country2
+	 * @return Code 204 No Content.
+	 */
+	@ApiOperation(value = "Removes a connection between countries", notes="This service removes a connection "
+			+ "between countries.")
+	@ApiResponses(value = {
+			@ApiResponse(code = 204, message = "The request has succeeded. The data has been removed."),
+	        @ApiResponse(code = 400, message = "The request has not been properly formed or formatted."),
+	        @ApiResponse(code = 404, message = "One or both of the requested countries has not been found.")
+	        })
+	@DeleteMapping
+	@RequestMapping(value = {"/remove/country/connection/{country1}/{country2}"}, method=RequestMethod.DELETE)
+	@ResponseStatus(code = HttpStatus.NO_CONTENT)
+	public ResponseEntity<?> removeCountryConnection(
+				    @ApiParam(name =  "Country1 String",
+						    type = "String",
+						    value = "Two letter abbreviation for country.",
+						    example = "BG", 
+						    required = true)
+					@PathVariable(name="country1") String country1,
+					@ApiParam(name =  "Country2 String",
+						    type = "String",
+						    value = "Two letter abbreviation for country.",
+						    example = "RO", 
+						    required = true)
+					@PathVariable(name="country2") String country2) {
+		serviceFacade.removeCountryConnection(country1, country2);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+	
+	/**
+	 * Removes a country from graph
+	 * 
+	 * @param String country
+	 * @return Code 204 No Content.
+	 */
+	
+	@ApiOperation(value = "Removes a country", notes="This service removes a country from map graph.")
+	@ApiResponses(value = {
+			@ApiResponse(code = 204, message = "The request has succeeded. The data has been removed."),
+			@ApiResponse(code = 400, message = "The request has not been properly formed or formatted."),
+			@ApiResponse(code = 404, message = "One or both of the requested countries has not been found.")
+	})
+	@DeleteMapping
+	@RequestMapping(value = {"/remove/country/{country}"}, method=RequestMethod.DELETE)
+	@ResponseStatus(code = HttpStatus.NO_CONTENT)
+	public ResponseEntity<?> removeCountryConnection(
+			@ApiParam(name =  "Country1 String",
+			type = "String",
+			value = "Two letter abbreviation for country.",
+			example = "BG", 
+			required = true)
+			@PathVariable(name="country") String country) {
+		serviceFacade.removeCountry(country);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+	
+	
 
 	/**
 	 * Gets Exchange Rates from ECB
@@ -228,7 +289,7 @@ public class TravelController {
 					    value = "Three letter abbreviation for country currency",
 					    example = "EUR", 
 					    required = true)
-				@NotBlank @PathVariable(name="baseCurrency") String baseCurrency) {
+			    @PathVariable(name="baseCurrency") String baseCurrency) {
 		ExchangeRateDto exchangeRatesToBaseCurr = serviceFacade.getExchangeRateMap(baseCurrency);
 		return new ResponseEntity<>(exchangeRatesToBaseCurr, HttpStatus.OK);
 	}
@@ -256,7 +317,7 @@ public class TravelController {
 		    value = "Two letter abbreviation for country",
 		    example = "BG", 
 		    required = true)
-			@NotBlank @PathVariable(name="country") String country) {
+			@PathVariable(name="country") String country) {
 		country = country.toUpperCase();
 		Set<String> neighboursSet = serviceFacade.getNeighbours(country);
 		return new ResponseEntity<>(neighboursSet, HttpStatus.OK);

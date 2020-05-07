@@ -22,10 +22,6 @@ public class TravelConfig {
 	
 	@NotNull
 	@Getter @Setter
-	private String defaultCurrency;
-	
-	@NotNull
-	@Getter @Setter
 	private int trasversalDepthLevel;
 	
 }

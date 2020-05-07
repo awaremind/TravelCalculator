@@ -11,13 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.tivanov.travelmanager.config.TravelConfig;
-import com.tivanov.travelmanager.domain.exception.BaseCurrencyExchangeRateMissmatchException;
 import com.tivanov.travelmanager.domain.model.dto.ExchangeRateDto;
 import com.tivanov.travelmanager.domain.model.dto.TravelRequestDto;
 import com.tivanov.travelmanager.domain.model.dto.TravelResponseDto;
 import com.tivanov.travelmanager.domain.model.map.CountriesMap;
 import com.tivanov.travelmanager.domain.model.map.Country;
-import com.tivanov.travelmanager.domain.service.TravelService;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -36,9 +34,6 @@ public class TravelProcessor {
 	@Autowired
 	private CountriesMap countriesMap;
 
-	@Autowired
-	private TravelService service;
-	
 	@Getter @Setter
 	private ExchangeRateDto currExchRateMap = new ExchangeRateDto();
 	
@@ -97,13 +92,6 @@ public class TravelProcessor {
 		this.totalBudget = request.getTotalAmount();
 		this.countryBudget = request.getAmountPerCountry();
 		this.requestCurrency = request.getCurrency();
-		
-		if (request.isAutomaticRateSet()) {
-			this.currExchRateMap = service.getExchRateGeneralMap(requestCurrency);
-		} else if (!(requestCurrency.equalsIgnoreCase(currExchRateMap.getBase()) || 
-						currExchRateMap.getBase() == null)) {
-				throw new BaseCurrencyExchangeRateMissmatchException();
-			}
 	}
 	
 	

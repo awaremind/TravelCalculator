@@ -1,8 +1,7 @@
 package com.tivanov.travelmanager.domain.model.map;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -11,39 +10,45 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity()
 @NoArgsConstructor
-public class Country implements Cloneable{
-	
-	@Id
-	private long id;
+public class Country{
     
+	@NotEmpty(message = "Country name is mandatory") 
 	@Getter @Setter
 	private String name;
 	
-	@NotBlank
-	@Getter @Setter
+	@NotBlank(message = "Country code is mandatory") 
+	@Getter
 	private String code;
 	
-	@Getter @Setter
+	@NotEmpty(message = "Country currency code is mandatory") 
+	@Getter 
 	private String currency;
 	
 	public Country(String code) {
 		super();
-		this.code = code;
+		this.code = code.toUpperCase();
 	}
 	
 	public Country(String name, @NotBlank String code, String currency) {
 		super();
 		this.name = name;
-		this.code = code;
-		this.currency = currency;
+		this.code = code.toUpperCase();
+		this.currency = currency.toUpperCase();
 	}
 
 	public Country(Country another) {
 		this.code = new String(another.getCode());
 		this.currency = new String(another.getCurrency());
 		this.name = new String(another.getName());
+	}
+
+	public void setCode(String code) {
+		this.code = code.toUpperCase();
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency.toUpperCase();
 	}
 	
 	@Override
@@ -76,4 +81,5 @@ public class Country implements Cloneable{
 		
 		return sb.toString();
 	}
+
 }
