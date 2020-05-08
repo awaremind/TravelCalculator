@@ -63,8 +63,4 @@ public class ExchangeRateConnector {
 		return exchangeRatesGeneralString;
 	}
 	
-	public String getGlobalExchangeRates() {
-		return getGlobalExchangeRates(config.getDefaultCurrency());
-	}
-
 }
